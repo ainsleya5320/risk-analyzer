@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark px-4">
+    <span class="navbar-brand mb-0 h1"><i class="bi bi-graph-up-arrow me-2"></i>Portfolio Analyzer</span>
+    <span class="navbar-text text-secondary small">Sharpe &middot; Sortino &middot; VaR &middot; Regression</span>
+</nav>
+
+<div class="container-fluid mt-4 px-4">
+
+    <!-- ── PORTFOLIO SETUP CARD ───────────────────────────────────── -->
+    <div class="card mb-4 shadow-sm" id="setup-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Portfolio Setup</h5>
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#setupBody">
+                <i class="bi bi-chevron-up"></i>
+            </button>
+        </div>
+        <div class="collapse show" id="setupBody">
+            <div class="card-body">
+
+                <!-- Data source toggle -->
+                <ul class="nav nav-pills mb-3" id="dataSourceTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="setDataSource('yahoo')">Yahoo Finance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="setDataSource('csv')">Upload CSV</a>
+                    </li>
+                </ul>
+
+                <!-- FMP API Key (optional) -->
+                <div class="mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">FMP API Key <span class="text-muted fw-normal">(optional)</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                <input type="password" class="form-control" id="fmp-api-key" placeholder="Paste your financialmodelingprep.com key">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>If provided, uses <strong>FMP</strong> (faster, more reliable). Otherwise falls back to Yahoo Finance.
+                                <a href="https://financialmodelingprep.com/developer" target="_blank" rel="noopener">Get free key &rarr;</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yahoo Finance inputs -->
+                <div id="yahoo-inputs">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Holdings</label>
+                            <div id="holdings-rows">
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5">
+                                        <input type="text" class="form-control ticker-input" placeholder="Ticker (e.g. AAPL)" value="AAPL">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)" disabled><i class="bi bi-x-lg"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5">
+                                        <input type="text" class="form-control ticker-input" placeholder="Ticker" value="MSFT">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5">
+                                        <input type="text" class="form-control ticker-input" placeholder="Ticker" value="GOOGL">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5">
+                                        <input type="text" class="form-control ticker-input" placeholder="Ticker" value="AMZN">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm mt-1" onclick="addHolding()">
+                                <i class="bi bi-plus-lg me-1"></i>Add Holding
+                            </button>
+                            <div class="mt-2">
+                                <small class="text-muted">Weight sum: <strong id="weight-sum">1.00</strong></small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Benchmark</label>
+                                <input type="text" class="form-control" id="benchmark" value="SPY" placeholder="e.g. SPY">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Date Range</label>
+                                <div class="row g-2">
+                                    <div class="col-6"><input type="date" class="form-control" id="start-date" value="2020-01-01"></div>
+                                    <div class="col-6"><input type="date" class="form-control" id="end-date" value="2025-12-31"></div>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label fw-bold">Risk-Free Rate</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="risk-free-rate" value="5.0" step="0.1">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-bold">VaR Confidence</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="confidence-level" value="95" step="1" min="90" max="99">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSV upload inputs (hidden by default) -->
+                <div id="csv-inputs" style="display:none;">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Upload CSV</label>
+                            <input type="file" class="form-control" id="csv-file" accept=".csv">
+                            <small class="text-muted">CSV with Date column + ticker columns. Values can be prices or returns.</small>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Data Type</label>
+                            <select class="form-select" id="csv-data-type">
+                                <option value="prices">Prices</option>
+                                <option value="returns">Returns</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="uploadCSV()">
+                                <i class="bi bi-upload me-1"></i>Upload
+                            </button>
+                        </div>
+                    </div>
+                    <div id="csv-status" class="alert alert-info d-none"></div>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn btn-primary btn-lg px-5" onclick="analyzePortfolio()" id="analyze-btn">
+                        <i class="bi bi-lightning-charge me-1"></i>Analyze Portfolio
+                    </button>
+                    <div id="loading-spinner" class="d-none">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <span class="ms-2 text-muted">Fetching data & computing stats...</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ERROR ALERT ────────────────────────────────────────────── -->
+    <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
+
+    <!-- ── RESULTS AREA ───────────────────────────────────────────── -->
+    <div id="results-area" style="display:none;">
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3" id="resultTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-summary" type="button">
+                    <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-correlation" type="button">
+                    <i class="bi bi-grid-3x3 me-1"></i>Correlation
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-regression" type="button">
+                    <i class="bi bi-diagram-3 me-1"></i>Regression
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-advanced" type="button">
+                    <i class="bi bi-bar-chart-steps me-1"></i>Advanced
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-leverage" type="button">
+                    <i class="bi bi-arrows-angle-expand me-1"></i>Leverage
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-risk" type="button">
+                    <i class="bi bi-shield-exclamation me-1"></i>Risk / VaR
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- ── DASHBOARD TAB ──────────────────────────────────── -->
+            <div class="tab-pane fade show active" id="tab-summary" role="tabpanel">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3"><div class="stat-card" id="stat-return"></div></div>
+                    <div class="col-md-3"><div class="stat-card" id="stat-vol"></div></div>
+                    <div class="col-md-3"><div class="stat-card" id="stat-sharpe"></div></div>
+                    <div class="col-md-3"><div class="stat-card" id="stat-sortino"></div></div>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3"><div class="stat-card" id="stat-info-ratio"></div></div>
+                    <div class="col-md-3"><div class="stat-card" id="stat-max-dd"></div></div>
+                    <div class="col-md-3"><div class="stat-card" id="stat-tracking"></div></div>
+                    <div class="col-md-3"><div class="stat-card" id="stat-bench-sharpe"></div></div>
+                </div>
+
+                <!-- Cumulative returns chart -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header"><h6 class="mb-0">Cumulative Returns: Portfolio vs Benchmark</h6></div>
+                    <div class="card-body p-0"><div id="chart-cumulative" style="height:420px;"></div></div>
+                </div>
+
+                <!-- Per-asset stats table -->
+                <div class="card shadow-sm">
+                    <div class="card-header"><h6 class="mb-0">Individual Asset Statistics</h6></div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped table-hover mb-0">
+                            <thead class="table-dark">
+                                <tr><th>Ticker</th><th>Annual Return</th><th>Annual Volatility</th><th>Sharpe Ratio</th></tr>
+                            </thead>
+                            <tbody id="asset-stats-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── CORRELATION TAB ────────────────────────────────── -->
+            <div class="tab-pane fade" id="tab-correlation" role="tabpanel">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header"><h6 class="mb-0">Correlation Matrix Heatmap</h6></div>
+                    <div class="card-body p-0"><div id="chart-correlation" style="height:500px;"></div></div>
+                </div>
+                <div class="card shadow-sm">
+                    <div class="card-header"><h6 class="mb-0">Correlation Values</h6></div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm mb-0" id="corr-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── REGRESSION TAB ─────────────────────────────────── -->
+            <div class="tab-pane fade" id="tab-regression" role="tabpanel">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header"><h6 class="mb-0">Multi-Variable Linear Regression</h6></div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            Enter factor tickers to regress portfolio excess returns against.
+                            Leave empty for a CAPM-style regression against the benchmark.
+                            Use ETFs as factor proxies (e.g., IWM for small-cap, IWD for value).
+                        </p>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Factor Tickers (comma-separated)</label>
+                                <input type="text" class="form-control" id="factor-tickers" placeholder="e.g. SPY, IWM, IWD  (leave blank for CAPM)">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" onclick="runRegression()" id="regression-btn">
+                                    <i class="bi bi-calculator me-1"></i>Run Regression
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-auto">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('factor-tickers').value='SPY'">CAPM</button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('factor-tickers').value='SPY, IWM, IWD'">3-Factor Proxy</button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('factor-tickers').value='SPY, IWM, IWD, MTUM'">4-Factor Proxy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="regression-results" style="display:none;">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><div class="stat-card" id="reg-alpha"></div></div>
+                        <div class="col-md-3"><div class="stat-card" id="reg-r2"></div></div>
+                        <div class="col-md-3"><div class="stat-card" id="reg-f"></div></div>
+                        <div class="col-md-3"><div class="stat-card" id="reg-dw"></div></div>
+                    </div>
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header"><h6 class="mb-0">Factor Coefficients</h6></div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr><th>Factor</th><th>Coefficient (Beta)</th><th>Std Error</th><th>t-Statistic</th><th>p-Value</th><th>Significance</th></tr>
+                                </thead>
+                                <tbody id="factor-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-header"><h6 class="mb-0">Regression Residuals</h6></div>
+                        <div class="card-body p-0"><div id="chart-residuals" style="height:350px;"></div></div>
+                    </div>
+                </div>
+
+                <div id="regression-loading" class="text-center d-none py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <span class="ms-2 text-muted">Running regression...</span>
+                </div>
+
+                <!-- ── Reference Guide ────────────────────────────── -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#regressionGuide">
+                        <h6 class="mb-0"><i class="bi bi-book me-2"></i>Regression Cheat Sheet</h6>
+                        <span class="text-muted small">click to expand</span>
+                    </div>
+                    <div class="collapse" id="regressionGuide">
+                        <div class="card-body">
+
+                            <!-- Summary Stats -->
+                            <h6 class="fw-bold text-primary mb-3"><i class="bi bi-speedometer2 me-2"></i>Summary Statistics</h6>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">Alpha (&alpha;)</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> The intercept — your portfolio's excess return <em>after</em> accounting for factor exposure. Annualized by multiplying daily alpha &times; 252.</p>
+                                        <p class="small mb-1"><strong>Good:</strong> <span class="text-success fw-bold">Positive and statistically significant</span> (p&lt;0.05) — you're generating genuine skill-based return.</p>
+                                        <p class="small mb-0"><strong>Bad:</strong> <span class="text-danger fw-bold">Negative</span> — you're destroying value vs. just holding the factors. <span class="text-muted">Insignificant (p&gt;0.05) means it could just be noise.</span></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">R-Squared (R&sup2;)</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> Fraction of portfolio variance explained by the factors. Ranges 0&ndash;1. <strong>Adj R&sup2;</strong> penalizes for adding factors that don't help.</p>
+                                        <p class="small mb-1"><strong>Good:</strong> <span class="text-success fw-bold">&gt; 0.70</span> — your factors explain most of the portfolio's movement. Useful for understanding <em>what drives your returns</em>.</p>
+                                        <p class="small mb-0"><strong>Bad:</strong> <span class="text-danger fw-bold">&lt; 0.30</span> — your factors are missing something. Either the portfolio has unique/idiosyncratic risk, or you need different factors.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">F-Statistic</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> Tests whether <em>all</em> your factors <em>jointly</em> explain portfolio returns better than a model with no factors at all (i.e., just the mean).</p>
+                                        <p class="small mb-1"><strong>Good:</strong> <span class="text-success fw-bold">Large F with p&lt;0.05</span> — the overall model is statistically significant. At minimum, <em>some</em> of your factors matter.</p>
+                                        <p class="small mb-0"><strong>Bad:</strong> <span class="text-danger fw-bold">F p-value &gt; 0.05</span> — the model is no better than random. Your chosen factors don't explain the portfolio.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">Durbin-Watson (DW)</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> Tests for serial correlation (autocorrelation) in the residuals. Ranges 0&ndash;4; ideal value is 2.0.</p>
+                                        <p class="small mb-1"><strong>Good:</strong> <span class="text-success fw-bold">1.5 &ndash; 2.5</span> — residuals look independent. Your model isn't systematically missing a time-based pattern.</p>
+                                        <p class="small mb-0"><strong>Bad:</strong> <span class="text-danger fw-bold">&lt; 1.5</span> = positive autocorrelation (errors trend together). <span class="text-danger fw-bold">&gt; 2.5</span> = negative autocorrelation. Both suggest a missing factor or regime changes.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Factor-level Stats -->
+                            <h6 class="fw-bold text-primary mb-3"><i class="bi bi-table me-2"></i>Factor Table Columns</h6>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">Coefficient (&beta;)</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> The factor loading — how much your portfolio moves for each unit move in that factor.</p>
+                                        <p class="small mb-1"><strong>Example:</strong> A Market &beta; of 1.2 means your portfolio moves 1.2% for every 1% market move — you have 20% more market risk than the benchmark.</p>
+                                        <p class="small mb-0"><strong>&beta; &gt; 1</strong> = amplified exposure. <strong>&beta; &lt; 1</strong> = dampened. <strong>&beta; &lt; 0</strong> = inverse/hedged.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">Standard Error (SE)</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> The uncertainty around the coefficient estimate. Smaller is better — it means the estimate is precise.</p>
+                                        <p class="small mb-0"><strong>Rule of thumb:</strong> If the coefficient is less than 2&times; its standard error, it's probably not significant. <span class="text-muted">(This is exactly what the t-stat checks.)</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">t-Statistic</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> Coefficient &divide; Standard Error. Tests whether this <em>individual</em> factor's coefficient is different from zero.</p>
+                                        <p class="small mb-1"><strong>Good:</strong> <span class="text-success fw-bold">|t| &gt; 2</span> — the factor has a statistically meaningful relationship with your portfolio.</p>
+                                        <p class="small mb-0"><strong>Bad:</strong> <span class="text-danger fw-bold">|t| &lt; 2</span> — the factor might not be contributing. Consider dropping it (watch Adj R&sup2; to confirm).</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">p-Value</h6>
+                                        <p class="small mb-1"><strong>What it is:</strong> Probability that the coefficient is actually zero and we're seeing the result by chance. Lower = more confident.</p>
+                                        <p class="small mb-1">
+                                            <span class="sig-badge sig-high">***</span> p &lt; 0.01 — very strong evidence<br>
+                                            <span class="sig-badge sig-medium">**</span>&ensp; p &lt; 0.05 — strong evidence (standard threshold)<br>
+                                            <span class="sig-badge sig-medium">*</span>&ensp;&ensp; p &lt; 0.10 — weak evidence<br>
+                                            <span class="sig-badge sig-low">n.s.</span> p &ge; 0.10 — not significant
+                                        </p>
+                                        <p class="small mb-0"><strong>CFA convention:</strong> Use p&lt;0.05 as the cutoff. Below it: reject the null (coefficient &ne; 0). Above it: fail to reject.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Residuals -->
+                            <h6 class="fw-bold text-primary mb-3"><i class="bi bi-graph-down me-2"></i>Residual Plot</h6>
+                            <div class="border rounded p-3">
+                                <p class="small mb-1"><strong>What it shows:</strong> The part of your portfolio's returns that the factors <em>can't</em> explain — your idiosyncratic risk (or alpha, if persistent).</p>
+                                <p class="small mb-1"><strong>What you want:</strong> Random noise centered around zero, no visible pattern, roughly constant spread over time.</p>
+                                <p class="small mb-0"><strong>Red flags:</strong> Residuals trending up/down (missing factor), fanning out (heteroscedasticity), or clustered spikes (regime changes — the DW stat will also flag this).</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── ADVANCED TAB ──────────────────────────────────── -->
+            <div class="tab-pane fade" id="tab-advanced" role="tabpanel">
+
+                <!-- Risk Decomposition -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header"><h6 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Risk Decomposition</h6></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div id="chart-risk-pie" style="height:350px;"></div>
+                            </div>
+                            <div class="col-md-7">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-dark">
+                                        <tr><th>Ticker</th><th>Weight</th><th>MCR (ann.)</th><th>CCR (ann.)</th><th>% Risk Contribution</th></tr>
+                                    </thead>
+                                    <tbody id="risk-decomp-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <p class="text-muted small mt-3 mb-0">
+                            <strong>MCR</strong> = Marginal Contribution to Risk &mdash; how much portfolio vol changes per unit weight increase.
+                            <strong>CCR</strong> = Component Contribution to Risk &mdash; weight &times; MCR (these sum to portfolio volatility).
+                            <strong>% Risk</strong> = each holding's share of total portfolio risk.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Rolling Statistics -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header"><h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Rolling Statistics (60-day window)</h6></div>
+                    <div class="card-body p-0">
+                        <div id="chart-rolling-sharpe" style="height:300px;"></div>
+                        <hr class="m-0">
+                        <div id="chart-rolling-beta" style="height:300px;"></div>
+                    </div>
+                </div>
+
+                <!-- Efficient Frontier -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="bi bi-bullseye me-2"></i>Efficient Frontier (Monte Carlo)</h6>
+                        <button class="btn btn-primary btn-sm" onclick="runFrontier()" id="frontier-btn">
+                            <i class="bi bi-calculator me-1"></i>Generate Frontier
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Generates 2,500 random portfolio weight combinations using your tickers to visualize the
+                            risk-return tradeoff space. Stars mark the max-Sharpe and min-volatility portfolios.
+                            Your current portfolio is shown in red.
+                        </p>
+                        <div id="frontier-loading" class="text-center d-none py-3">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <span class="ms-2 text-muted">Generating random portfolios...</span>
+                        </div>
+                        <div id="chart-frontier" style="height:500px;"></div>
+                        <div id="frontier-stats" class="row g-3 mt-2" style="display:none;">
+                            <div class="col-md-6"><div class="stat-card" id="frontier-max-sharpe"></div></div>
+                            <div class="col-md-6"><div class="stat-card" id="frontier-min-vol"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── LEVERAGE TAB ───────────────────────────────────── -->
+            <div class="tab-pane fade" id="tab-leverage" role="tabpanel">
+
+                <!-- Controls -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header"><h6 class="mb-0"><i class="bi bi-arrows-angle-expand me-2"></i>Leverage Simulator</h6></div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            Model how leverage transforms your portfolio's risk-return profile.
+                            Leveraged return = L &times; portfolio return &minus; (L&minus;1) &times; borrowing cost.
+                            At 1.0&times; you see your actual portfolio.
+                        </p>
+                        <div class="row g-3 mb-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Borrowing Rate (annualized)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="leverage-borrow-rate" value="6.5" step="0.25" min="0" max="25">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <small class="text-muted">Typical: Rf + 1&ndash;2% spread. Current default: Rf + 1.5%.</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Leverage Levels</label>
+                                <input type="text" class="form-control" id="leverage-levels" value="0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0">
+                                <small class="text-muted">Comma-separated multipliers. 1.0 = no leverage.</small>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="runLeverage()" id="leverage-btn">
+                                    <i class="bi bi-lightning-charge me-1"></i>Simulate Leverage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="leverage-loading" class="text-center d-none py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <span class="ms-2 text-muted">Computing leveraged scenarios...</span>
+                </div>
+
+                <div id="leverage-results" style="display:none;">
+
+                    <!-- Metrics Table -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header"><h6 class="mb-0"><i class="bi bi-table me-2"></i>Metrics by Leverage Level</h6></div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Leverage</th>
+                                            <th>Ann. Return</th>
+                                            <th>Ann. Volatility</th>
+                                            <th>Sharpe</th>
+                                            <th>Sortino</th>
+                                            <th>Max Drawdown</th>
+                                            <th>Daily VaR (95%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="leverage-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Capital Market Line -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header"><h6 class="mb-0"><i class="bi bi-bullseye me-2"></i>Leverage &amp; the Capital Market Line</h6></div>
+                        <div class="card-body p-0"><div id="chart-leverage-cml" style="height:420px;"></div></div>
+                    </div>
+
+                    <!-- Cumulative Returns -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header"><h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Cumulative Returns by Leverage</h6></div>
+                        <div class="card-body p-0"><div id="chart-leverage-cum" style="height:420px;"></div></div>
+                    </div>
+
+                    <!-- Drawdown Comparison -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header"><h6 class="mb-0"><i class="bi bi-graph-down me-2"></i>Drawdown by Leverage</h6></div>
+                        <div class="card-body p-0"><div id="chart-leverage-dd" style="height:380px;"></div></div>
+                    </div>
+
+                </div>
+
+                <!-- Cheat Sheet -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#leverageGuide">
+                        <h6 class="mb-0"><i class="bi bi-book me-2"></i>Leverage Cheat Sheet</h6>
+                        <span class="text-muted small">click to expand</span>
+                    </div>
+                    <div class="collapse" id="leverageGuide">
+                        <div class="card-body">
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">How Leverage Works</h6>
+                                        <p class="small mb-1">At <strong>L&times;</strong> leverage, you borrow <strong>(L&minus;1)</strong> dollars for every $1 of equity. A 2&times; portfolio borrows $1 per $1 owned.</p>
+                                        <p class="small mb-1"><strong>Return:</strong> L &times; R<sub>portfolio</sub> &minus; (L&minus;1) &times; R<sub>borrow</sub></p>
+                                        <p class="small mb-0"><strong>Key insight:</strong> Returns and volatility scale linearly with leverage, but borrowing costs create drag that <em>always</em> reduces Sharpe below the unleveraged level.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">Why Drawdowns Are the Danger</h6>
+                                        <p class="small mb-1">A 50% drawdown at 1&times; becomes a <strong>100% wipeout at 2&times;</strong>. Drawdown scales <em>worse</em> than linearly because you need larger recoveries.</p>
+                                        <p class="small mb-1"><strong>Recovery math:</strong> A 50% loss needs a 100% gain to break even. A 75% loss needs 300%.</p>
+                                        <p class="small mb-0"><strong>Margin call risk:</strong> In practice, brokers require maintenance margin (~25&ndash;30%). A 2&times; leveraged portfolio faces a margin call after roughly a 37% drop.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">Borrowing Cost Impact</h6>
+                                        <p class="small mb-1">Every unit of leverage above 1&times; incurs the borrowing rate. At 2&times; with 6% borrowing, you pay 6% annually in interest on the borrowed portion.</p>
+                                        <p class="small mb-0"><strong>Sharpe degradation:</strong> Without costs, Sharpe is unchanged by leverage. With borrowing costs, Sharpe always <em>falls</em> as leverage increases — this is why the CML chart curves downward.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="fw-bold">When Does Leverage Help?</h6>
+                                        <p class="small mb-1"><span class="text-success fw-bold">High Sharpe + low borrowing cost</span> — if your portfolio's Sharpe exceeds ~0.5 and you can borrow cheaply, moderate leverage (1.25&ndash;1.5&times;) can boost returns without catastrophic drawdowns.</p>
+                                        <p class="small mb-0"><span class="text-danger fw-bold">Low Sharpe + high costs</span> — leverage amplifies losses and the interest drag destroys remaining return. The table makes this obvious.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── RISK / VAR TAB ─────────────────────────────────── -->
+            <div class="tab-pane fade" id="tab-risk" role="tabpanel">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4"><div class="stat-card" id="var-parametric"></div></div>
+                    <div class="col-md-4"><div class="stat-card" id="var-historical"></div></div>
+                    <div class="col-md-4"><div class="stat-card" id="var-montecarlo"></div></div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header"><h6 class="mb-0">Value at Risk Explained</h6></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>Parametric VaR</h6>
+                                <p class="text-muted small">Assumes returns are normally distributed. Calculated as mean + z-score * standard deviation. Quick but may underestimate tail risk.</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Historical VaR</h6>
+                                <p class="text-muted small">Uses the actual percentile of historical returns. No distributional assumption. Limited by the sample period.</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Monte Carlo VaR</h6>
+                                <p class="text-muted small">Simulates 10,000 return scenarios using estimated mean and volatility. Flexible but depends on the assumed distribution.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header"><h6 class="mb-0">Drawdown Over Time</h6></div>
+                    <div class="card-body p-0"><div id="chart-drawdown" style="height:380px;"></div></div>
+                </div>
+            </div>
+
+        </div><!-- /tab-content -->
+    </div><!-- /results-area -->
+
+</div><!-- /container -->
+
+<!-- Footer -->
+<footer class="text-center text-muted py-4 mt-5 border-top">
+    <small>Portfolio Analyzer &mdash; For educational and personal use only. Not financial advice.</small>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
