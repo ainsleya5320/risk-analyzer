@@ -66,48 +66,114 @@
                             <label class="form-label fw-bold">Holdings</label>
                             <div id="holdings-rows">
                                 <div class="row g-2 mb-2 holding-row">
-                                    <div class="col-5">
-                                        <input type="text" class="form-control ticker-input" placeholder="Ticker (e.g. AAPL)" value="AAPL">
-                                    </div>
-                                    <div class="col-4">
-                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)" disabled><i class="bi bi-x-lg"></i></button>
-                                    </div>
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker (e.g. AAPL)" value="TSM"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.19" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)" disabled><i class="bi bi-x-lg"></i></button></div>
                                 </div>
                                 <div class="row g-2 mb-2 holding-row">
-                                    <div class="col-5">
-                                        <input type="text" class="form-control ticker-input" placeholder="Ticker" value="MSFT">
-                                    </div>
-                                    <div class="col-4">
-                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button>
-                                    </div>
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="NBIS"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.11" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
                                 </div>
                                 <div class="row g-2 mb-2 holding-row">
-                                    <div class="col-5">
-                                        <input type="text" class="form-control ticker-input" placeholder="Ticker" value="GOOGL">
-                                    </div>
-                                    <div class="col-4">
-                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button>
-                                    </div>
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="PSHZF"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.09" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
                                 </div>
                                 <div class="row g-2 mb-2 holding-row">
-                                    <div class="col-5">
-                                        <input type="text" class="form-control ticker-input" placeholder="Ticker" value="AMZN">
-                                    </div>
-                                    <div class="col-4">
-                                        <input type="number" class="form-control weight-input" placeholder="Weight" value="0.25" step="0.01" min="0" max="1">
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button>
-                                    </div>
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="BAC"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.07" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="DUOL"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.05" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="BRK-B"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.05" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="AMZN"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.05" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="GOOGL"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.05" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="NVDA"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.05" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="CRWV"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.04" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="META"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.04" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="ZM"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.03" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="MU"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.03" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="BYDDF"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.02" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="SEG"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.02" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="NFLX"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.02" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="QXO"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.02" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="EWBC"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.02" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="NAAHR"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.02" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="SHOP"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.01" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="MSFT"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.01" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
+                                </div>
+                                <div class="row g-2 mb-2 holding-row">
+                                    <div class="col-5"><input type="text" class="form-control ticker-input" placeholder="Ticker" value="PSTVY"></div>
+                                    <div class="col-4"><input type="number" class="form-control weight-input" placeholder="Weight" value="0.01" step="0.01" min="0" max="1"></div>
+                                    <div class="col-3"><button class="btn btn-outline-danger btn-sm remove-row-btn" onclick="removeHolding(this)"><i class="bi bi-x-lg"></i></button></div>
                                 </div>
                             </div>
                             <button class="btn btn-outline-primary btn-sm mt-1" onclick="addHolding()">
